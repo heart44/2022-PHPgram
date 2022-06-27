@@ -14,8 +14,10 @@ class UserController extends Controller {
 
                 if(!$dbUser || !password_verify($pw, $dbUser->pw)) {
                     // echo "<script>alert('아이디, 비밀번호가 틀렸습니다.');</script>";
-                    return "redirect:signin?email=$email&err"; 
+                    return "redirect:signin?email={$email}&err"; 
                 }
+                $dbUser->pw = null;
+                $dbUser->regdt = null;
                 $this->flash(_LOGINUSER, $dbUser);
 
                 return "redirect:/feed/index";
@@ -43,5 +45,10 @@ class UserController extends Controller {
                 
                 return "redirect:signin";
         }
+    }
+
+    public function logout() {
+        $this->flash(_LOGINUSER);
+        return "redirect:/user/signin";
     }
 }
