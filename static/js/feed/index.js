@@ -4,6 +4,7 @@
         const modal = document.querySelector('#newFeedModal');
         const body =  modal.querySelector('#id-modal-body');
         const frmElem = modal.querySelector('form');
+        const closeBtn = modal.querySelector('.btn-close');
 
         //이미지 값이 변하면
         frmElem.imgs.addEventListener('change', function(e) {
@@ -37,22 +38,20 @@
 
                     const fData = new FormData();   //ajax로 데이터 보낼때 FormData 사용
                     for(let i=0; i<files.length; i++) {
-                        fData.append('imgs', files[i]);
+                        fData.append('imgs[]', files[i]);
                     }
                     fData.append('ctnt', body.querySelector('textarea').value);
                     fData.append('location', body.querySelector('input[type=text]').value);
 
-                    fetch('/feed/reg', {
+                    fetch('/feed/rest', {
                         method: 'post',
                         body: fData
                     }).then(res => res.json())
                         .then(myJson => {
-
-                            const closeBtn = modal.querySelector('.btn-close');
-                            closeBtn.click();
-
-                            if(feedObj && myJson.result) {
-                                feedObj.refreshList();
+                            console.log(myJson);
+                            
+                            if(myJson.result) {
+                                closeBtn.click();
                             }
                         });
                 });
