@@ -27,4 +27,46 @@ class FeedModel extends Model {
 
         return $stmt->rowCount();
     }
+
+    public function selFeedList(&$param) {
+        $sql = "SELECT a.*, c.nm AS writer, c.mainimg
+                    , IFNULL(e.cnt, 0) AS favCnt
+                    , IF(f.ifeed IS NULL, 0, 1) AS isFav
+                FROM t_feed a
+                INNER JOIN t_user c
+                ON a.iuser = c.iuser
+                LEFT JOIN (
+                    SELECT ifeed, COUNT(ifeed) AS cnt, iuser
+                    FROM t_feed_fav
+                    GROUP BY ifeed
+                ) e
+                ON a.ifeed = e.ifeed
+                LEFT JOIN (
+                    SELECT ifeed
+                    FROM t_feed_fav
+                    WHERE iuser = :iuser
+                ) f
+                ON a.ifeed = f.ifeed
+                ORDER BY a.ifeed DESC
+                LIMIT :startIdx, :feedItemCnt";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(":iuser", $param["iuser"]);
+        $stmt->bindValue(":startIdx", $param["startIdx"]);
+        $stmt->bindValue(":feedItemCnt", _FEED_ITEM_CNT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function selFeedImgList($param) {
+        $sql = "SELECT img FROM t_feed_img
+                WHERE ifeed = :ifeed";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(":ifeed", $param->ifeed);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
 }

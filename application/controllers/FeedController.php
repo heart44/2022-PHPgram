@@ -4,6 +4,7 @@ namespace application\controllers;
 class FeedController extends Controller {
     public function index() {
         $this->addAttribute(_JS, ["feed/index"]);
+        $this->addAttribute(_CSS, ["feed/index"]);
         $this->addAttribute(_MAIN, $this->getView("feed/index.php"));
         return "template/t1.php";
     }
@@ -39,8 +40,24 @@ class FeedController extends Controller {
                         $this->model->insFeedImg($imgParam);
                     }
                 }
-
                 return ["result" => 1];
-            }
+            
+            case _GET:
+                $page = 1;
+                if(isset($_GET["page"])) {
+                    $page = intval($_GET["page"]);
+                }
+                $startIdx = ($page - 1) * _FEED_ITEM_CNT;
+                $param = [
+                    "startIdx" => $startIdx, 
+                    "iuser" => getIuser(), 
+                ];
+                $list = $this->model->selFeedList($param);
+                foreach($list as $item) {
+                    $item->imgList = $this->model->selFeedImgList($item);
+                }
+                return $list;
+        }
+        // return "redirect:/feed/index";
     }
 }
