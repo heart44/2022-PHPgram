@@ -1,4 +1,12 @@
-main { background-color: rgb(250, 250, 250); }
-.item_container_parent { width: 100%; max-width: 614px; }
-.size_box_100 { position: relative; height: 100px; }
-#item_container > .item { border: 1px solid #dfdfdf; border-radius: 8px; background-color: white; }
+main { 
+    background-color: rgb(250, 250, 250); 
+    --font : Arial
+}
+.fas { color: #ea4040; }
+.w100p_mw614 { width: 100%; max-width: 614px; }
+#item_container > .item { border: 1px solid #dfdfdf; border-radius: 8px; background-color: #fff;
+font-family: var(--font) }
+.spanNick { font-weight: bold; }
+.spanNick:hover { text-decoration: underline; }
+.reg_date { font-size: x-small; color: #727272; }
+.font_loc { font-size: small; }

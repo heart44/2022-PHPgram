@@ -75,6 +75,7 @@
         limit: 20,
         itemLength: 0,
         currentPage: 1,
+        swiper: null,
         loadingElem: document.querySelector('.loading'),
         containerElem: document.querySelector('#item_container'),
 
@@ -93,6 +94,8 @@
                 this.hideLoading();
             });
         },
+
+        //feedlist 만드는 부분
         makeFeedList: function(list) {
             if(list.length !== 0) {
                 list.forEach(item => {
@@ -100,6 +103,19 @@
                     this.containerElem.appendChild(divItem);
                 });
             }
+
+            if (this.swiper !== null) { this.swiper = null; }
+            this.swiper = new Swiper('.swiper', {
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                pagination: { el: '.swiper-pagination' },
+                allowTouchMove: false,
+                direction: 'horizontal',
+                loop: false,
+            });
+
             this.hideLoading();
         },
         makeFeedItem: function(item) {
@@ -117,43 +133,146 @@
                                 onerror='this.error=null;this.src="/static/img/profile/user.png"'>`;
             
             divTop.innerHTML = `
-                <div class="d-flex flex-column justify-content-center"><div class="circleimg h40 w40">${writerImg}</div></div>
+                <div class="d-flex flex-column justify-content-center">
+                    <div class="circleimg h40 w40 pointer feedwin">${writerImg}</div>
+                </div>
                     <div class="p-3 flex-grow-1">
                         <div>
-                            <span class="pointer" onclick="moveToProfile(${item.iuser});">${item.writer} - ${regDtInfo}</span>
+                            <span class="pointer bold feedwin">${item.writer}</span>
                         </div>
-                    <div>${item.location === null ? '' : item.location}</div>
+                    <div class="font_loc">${item.location === null ? '' : item.location}</div>
                 </div>
             `;
 
+            //이미지 스와이퍼 만드는 부분
             const divImgSwiper = document.createElement('div');
             divContainer.appendChild(divImgSwiper);
             divImgSwiper.className = 'swiper item_img';
             divImgSwiper.innerHTML = `
-                <div class="swiper-wrapper"></div>
+                <div class="swiper-wrapper align-items-center"></div>
                 <div class="swiper-pagination"></div>
                 <div class="swiper-button-prev"></div>
                 <div class="swiper-button-next"></div>
             `;
             const divSwiperWrapper = divImgSwiper.querySelector('.swiper-wrapper');
-            //imgList는 for문 돌릴 예정
-            const imgObj = item.imgList[0];
-            const divSwiperSlide = document.createElement('div');
-            divSwiperWrapper.appendChild(divSwiperSlide);
-            divSwiperSlide.classList.add('swiper-slide');
+            //imgList는 forEach문 돌릴 예정
+            item.imgList.forEach(function(imgObj) {
+                const divSwiperSlide = document.createElement('div');
+                divSwiperWrapper.appendChild(divSwiperSlide);
+                divSwiperSlide.classList.add('swiper-slide');
 
-            const img = document.createElement('img');
-            divSwiperSlide.appendChild(img);
-            img.className = 'w614';
-            img.src = `/static/img/feed/${item.ifeed}/${imgObj.img}`;
+                const img = document.createElement('img');
+                divSwiperSlide.appendChild(img);
+                img.className = 'w100p_mw614';
+                img.src = `/static/img/feed/${item.ifeed}/${imgObj.img}`;
+            });
+
+            //좋아요, 디엠 버튼 만드는 부분
+            const divBtns = document.createElement('div');
+            divContainer.appendChild(divBtns);
+            divBtns.className = 'favCont p-3 d-flex flex-row';
+
+            //좋아요
+            const heartIcon = document.createElement('i');
+            divBtns.appendChild(heartIcon);
+            heartIcon.className = 'fa-heart pointer rem1_5 me-3';
+            heartIcon.classList.add(item.isFav === 1 ? 'fas' : 'far');
+            //좋아요 버튼 이벤트
+            heartIcon.addEventListener('click', e => {
+                let method = 'POST';
+                if(item.isFav === 1) {  //delete
+                    method = 'DELETE';
+                } 
+
+                fetch(`/feed/fav/${item.ifeed}`, {
+                    'method': method,
+                }).then(res => res.json())
+                .then(res => {
+                    if(res.result) {
+                        item.isFav = 1 - item.isFav;    //0 -> 1, 1 -> 0
+                        if(item.isFav === 0) {  //좋아요 취소
+                            heartIcon.classList.remove('fas');
+                            heartIcon.classList.add('far');
+                        } else {    //좋아요 처리
+                            heartIcon.classList.remove('far');
+                            heartIcon.classList.add('fas');
+                        }
+                    } else {
+                        alert('좋아요를 할 수 없습니다.');
+                    }
+                }).catch(e => {
+                    alert('네트워크에 이상이 있습니다.');
+                });
+            });
+
+            //dm
+            const divDm = document.createElement('div');
+            divBtns.appendChild(divDm);
+            divDm.className = 'pointer';
+            divDm.innerHTML = `<svg aria-label="다이렉트 메세지" class="_8-yf5 " color="#262626" fill="#262626" height="24" role="img" viewBox="0 0 24 24" width="24"><line fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" x1="22" x2="9.218" y1="3" y2="10.083"></line><polygon fill="none" points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334" stroke="currentColor" stroke-linejoin="round" stroke-width="2"></polygon></svg>`;
+
+            //좋아요 갯수
+            const divFav = document.createElement('div');
+            divContainer.appendChild(divFav);
+            divFav.className = 'p-3 d-none';
+            const spanFavCnt = document.createElement('span');
+            divFav.appendChild(spanFavCnt);
+            spanFavCnt.className = 'bold';
+            spanFavCnt.innerHTML = `좋아요 ${item.favCnt}개`;
+            if(item.favCnt > 0) { divFav.classList.remove('d-none'); }
+
+            //글 내용
+            if(item.ctnt !== null && item.ctnt !== '') {
+                const divCtnt = document.createElement('div');
+                divContainer.appendChild(divCtnt);
+                divCtnt.innerHTML = `
+                    <span class="pointer spanNick feedwin">${item.writer}</span>
+                    <span>${item.ctnt}</span>
+                    `;
+                // divCtnt.innerText = item.ctnt;
+                divCtnt.className = 'itemCtnt p-3';
+            }
+
+            //게시글 업로드한 시간
+            const divDate = document.createElement('div');
+            divContainer.appendChild(divDate);
+            divDate.innerHTML = `<div class="reg_date p-3">${regDtInfo}</div>`;
+
+            //댓글(innerHtml말고 appendChild로 만드는 방법)
+            const divCmtList = document.createElement('div');
+            divContainer.appendChild(divCmtList);
+            
+            const divCmt = document.createElement('div');
+            divContainer.appendChild(divCmt);
+            const divCmtForm = document.createElement('div');
+            divCmtForm.className = 'd-flex flex-row';
+            divCmt.appendChild(divCmtForm);
+            divCmtForm.innerHTML = `
+                <input type="text" class="flex-grow-1 my_input p-2 back_color" placeholder="댓글을 입력하세요...">
+                <button type="button" class="btn btn-outline-primary">게시</button>
+            `;
+
+            //유저 프로필로 가는 부분
+            const feedWinList = divContainer.querySelectorAll('.feedwin');
+            feedWinList.forEach(el => {
+                el.addEventListener('click', () => {
+                    moveToFeedWin(item.iuser);
+                });
+            });
 
             return divContainer;
         },
+        //feedList 끝
 
+
+        //새고했을 때 뜨는 로딩 이미지
         showLoading: function() { this.loadingElem.classList.remove('d-none'); },
         hideLoading: function() { this.loadingElem.classList.add('d-none'); }
     }
 
-    feedObj.getFeedList();
+    function moveToFeedWin(iuser) {
+        location.href = `/user/feedwin?iuser=${iuser}`;
+    }
 
+    feedObj.getFeedList();
 })();

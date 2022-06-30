@@ -3,8 +3,8 @@ namespace application\controllers;
 
 class FeedController extends Controller {
     public function index() {
-        $this->addAttribute(_JS, ["feed/index"]);
-        $this->addAttribute(_CSS, ["feed/index"]);
+        $this->addAttribute(_JS, ["feed/index", "https://unpkg.com/swiper@8/swiper-bundle.min.js"]);
+        $this->addAttribute(_CSS, ["feed/index", "https://unpkg.com/swiper@8/swiper-bundle.min.css"]);
         $this->addAttribute(_MAIN, $this->getView("feed/index.php"));
         return "template/t1.php";
     }
@@ -13,7 +13,7 @@ class FeedController extends Controller {
         switch(getMethod()) {
             case _POST: 
                 if(!is_array($_FILES) || !isset($_FILES['imgs'])) {
-                    return ["result" => 0];
+                    return [_RESULT => 0];
                 }
 
                 $location = $_POST["location"];
@@ -40,7 +40,7 @@ class FeedController extends Controller {
                         $this->model->insFeedImg($imgParam);
                     }
                 }
-                return ["result" => 1];
+                return [_RESULT => 1];
             
             case _GET:
                 $page = 1;
@@ -59,5 +59,24 @@ class FeedController extends Controller {
                 return $list;
         }
         // return "redirect:/feed/index";
+    }
+
+    public function fav() {
+        $urlPaths = getUrlPaths();
+        if(!isset($urlPaths[2])) {
+            exit();
+        }
+
+        $param = [
+            "ifeed" => intval($urlPaths[2]),
+            "iuser" => getIuser(),
+        ];
+
+        switch(getMethod()) {
+            case _POST:
+                return [_RESULT => $this->model->insFeedFav($param)];
+            case _DELETE:
+                return [_RESULT => $this->model->delFeedFav($param)];
+        }
     }
 }
