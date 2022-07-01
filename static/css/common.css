@@ -3,6 +3,10 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
 
 * { padding: 0; margin: 0; border: 0; box-sizing: border-box; }
+* {
+    --ig-error-or-destructive: 237,73,86;
+    --primary-button: 0,149,246
+}
 a { text-decoration: none; }
 blockquote, q { quotes: none; }
 body { min-height: 100%; display: flex; flex-direction: column; }
@@ -14,6 +18,8 @@ table { border-collapse: collapse; border-spacing: 0; }
 
 .back_color { background-color: #fafafa; }
 .bold { font-weight: bold; }
+.c_error-or-destructive { color: rgb(var(--ig-error-or-destructive)); }
+.c_primary-button { color: rgb(var(--primary-button)); }
 .circleimg { display: inline-block; overflow: hidden; border-radius: 50%; border: 1px solid #ecf0f1; }
 .circleimg > img { width: 100%; height: 100%; object-fit: cover; }
 .d-none { display: none !important; }

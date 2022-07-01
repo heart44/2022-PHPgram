@@ -1,0 +1,10 @@
+.profile-title { padding: 1rem; }
+.profile-content { border-radius: .7rem;}
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 450px;        
+    }
+}
+
+.modal_item { display: flex; flex-wrap: wrap; justify-content: center; flex-shrink: 0; align-items: center; padding: 0.75rem; }
+.modal_item:not(:last-child) { border-bottom: 1px solid #dee2e6; }
