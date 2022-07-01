@@ -126,7 +126,7 @@ const feedObj = {
         //좋아요 갯수
         const divFav = document.createElement('div');
         divContainer.appendChild(divFav);
-        divFav.className = 'p-3 d-none';
+        divFav.className = 'ps-3 d-none';
         const spanFavCnt = document.createElement('span');
         divFav.appendChild(spanFavCnt);
         spanFavCnt.className = 'bold';
@@ -142,7 +142,7 @@ const feedObj = {
                 <span>${item.ctnt}</span>
                 `;
             // divCtnt.innerText = item.ctnt;
-            divCtnt.className = 'itemCtnt p-3';
+            divCtnt.className = 'itemCtnt ps-3 pt-2';
         }
 
         //게시글 업로드한 시간
@@ -189,7 +189,7 @@ function moveToFeedWin(iuser) {
 
 (function () {
     const btnNewFeedModal = document.querySelector('#btnNewFeedModal');
-    if (btnNewFeedModal) {
+    if(btnNewFeedModal) {
         const modal = document.querySelector('#newFeedModal');
         const body = modal.querySelector('#id-modal-body');
         const frmElem = modal.querySelector('form');
@@ -237,13 +237,11 @@ function moveToFeedWin(iuser) {
                         body: fData
                     }).then(res => res.json())
                         .then(myJson => {
-                            console.log(myJson);
-
+                            // console.log(myJson);
                             if (myJson.result) {
                                 btnClose.click();
                             }
                         });
-
                 });
             }
         });

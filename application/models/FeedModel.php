@@ -29,7 +29,7 @@ class FeedModel extends Model {
     }
 
     public function selFeedList(&$param) {
-        $sql = "SELECT a.*, c.nm AS writer, c.mainimg
+        $sql = "SELECT a.*, c.id AS writer, c.mainimg
                     , IFNULL(e.cnt, 0) AS favCnt
                     , IF(f.ifeed IS NULL, 0, 1) AS isFav
                 FROM t_feed a
