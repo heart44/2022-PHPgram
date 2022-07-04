@@ -44,4 +44,63 @@ class UserModel extends Model {
         
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
+
+    //-------- 밑으로는 Follow --------
+    public function insFollow(&$param) {
+        $sql = "INSERT INTO t_user_follow (fromiuser, toiuser)
+                VALUES (?, ?)";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(1, $param["fromiuser"]);
+        $stmt->bindValue(2, $param["toiuser"]);
+        $stmt->execute();
+
+        return $stmt->rowCount();
+    }
+
+    public function delFollow(&$param) {
+        $sql = "DELETE FROM t_user_follow
+                WHERE fromiuser = ? and toiuser = ?";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(1, $param["fromiuser"]);
+        $stmt->bindValue(2, $param["toiuser"]);
+        $stmt->execute();
+
+        return $stmt->rowCount();
+    }
+
+    //-------- 밑으로는 Feed --------
+    public function selFeedList(&$param) {
+        $iuser = $param["iuser"];
+
+        $sql = "SELECT a.*, c.id AS writer, c.mainimg
+                    , IFNULL(e.cnt, 0) AS favCnt
+                    , IF(f.ifeed IS NULL, 0, 1) AS isFav
+                FROM t_feed a
+                INNER JOIN t_user c
+                ON a.iuser = c.iuser and c.iuser = {$iuser}
+                LEFT JOIN (
+                    SELECT ifeed, COUNT(ifeed) AS cnt, iuser
+                    FROM t_feed_fav
+                    GROUP BY ifeed
+                ) e
+                ON a.ifeed = e.ifeed
+                LEFT JOIN (
+                    SELECT ifeed
+                    FROM t_feed_fav
+                    WHERE iuser = {$iuser}
+                ) f
+                ON a.ifeed = f.ifeed
+                ORDER BY a.ifeed DESC
+                LIMIT :startIdx, :feedItemCnt";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(":startIdx", $param["startIdx"]);
+        $stmt->bindValue(":feedItemCnt", _FEED_ITEM_CNT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
 }

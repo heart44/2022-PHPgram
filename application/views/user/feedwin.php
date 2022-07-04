@@ -1,7 +1,8 @@
+<div id="gData" data-toiuser="<?= $this->data->iuser ?>"></div>
 <div class="d-flex flex-column align-items-center">
     <div class="size_box_100"></div>
     <div class="w100p_mw614">
-        <div class="d-flex flex-row">
+        <div class="d-flex flkex-row">
             <div class="d-flex flex-column justify-content-center me-3">
                 <div class="circleimg h150 w150 pointer feedwin">
                     <img data-bs-toggle="modal" data-bs-target="#changeProfileImgModal" src='/static/img/profile/<?= $this->data->iuser ?>/<?= $this->data->mainimg ?>' onerror='this.error=null;this.src="/static/img/profile/user.png"'>
@@ -10,22 +11,30 @@
             <div class="flex-grow-1 d-flex flex-column justify-content-evenly">
                 <div><?= $this->data->id ?>
                     <!-- <?php 
-                        $youme = $this->data->youme;
-                        $meyou = $this->data->meyou;
                         if(getIuser() === $this->data->iuser) { ?>
-                            
-                    <?php } else if($youme === 1 && $meyou === 0) { ?>
-                            <button type="button" id="btnFollow" data-follow="0" class="btn btn-primary">맞팔로우 하기</button>
-                    <?php } else if($youme === 0 && $meyou === 0) { ?>
-                            <button type="button" id="btnFollow" data-follow="0" class="btn btn-primary">팔로우</button>
-                    <?php } else if(($youme === 1 && $meyou === 1) || ($youme === 0 && $meyou === 1)) { ?>
-                            <button type="button" id="btnFollow" data-follow="1" class="btn btn-secondary">팔로우 취소</button>
-                    <?php } ?> -->
+                            <button type="button" id="btnModProfile" class="btn btn-outline-secondary">프로필 수정</button>
+                    <?php } else {
+                            $youme = $this->data->youme;
+                            $meyou = $this->data->meyou;
 
+                            if($youme === 1 && $meyou === 0) { ?>
+                                <button type="button" id="btnFollow" data-youme="<?= $youme ?>" data-follow="0" class="btn btn-primary">맞팔로우 하기</button>
+                        <?php } else if($youme === 0 && $meyou === 0) { ?>
+                                <button type="button" id="btnFollow" data-youme="<?= $youme ?>" data-follow="0" class="btn btn-primary">팔로우</button>
+                        <?php } else if(($youme === 1 && $meyou === 1) || ($youme === 0 && $meyou === 1)) { ?>
+                                <button type="button" id="btnFollow" data-youme="<?= $youme ?>" data-follow="1" class="btn btn-secondary">팔로우 취소</button>
+                        <?php } ?>
+                    <?php } ?> -->
+                            
+
+                    <!-- 강사님 소스 -->
                     <?php
                         if($this->data->iuser === getIuser()) {
                             echo '<button type="button" id="btnModProfile" class="btn btn-outline-secondary">프로필 수정</button>';
                         } else {
+                            $youme = $this->data->youme;
+                            $meyou = $this->data->meyou;
+                            
                             $data_follow = 0;
                             $cls = "btn-primary";
                             $txt = "팔로우";
@@ -37,7 +46,7 @@
                             } else if($youme === 1 && $meyou === 0) {
                                 $txt = "맞팔로우 하기";
                             } ?>
-                            <button type="button" id="btnFollow" data-follow="<?= $data_follow ?>" class="btn <?= $cls ?>"><?= $txt ?></button>
+                            <button type="button" id="btnFollow" data-youme="<?= $youme ?>" data-follow="<?= $data_follow ?>" class="btn <?= $cls ?>"><?= $txt ?></button>
                         <?php } 
                     ?>
                 </div>
@@ -50,7 +59,12 @@
                 <div><?= $this->data->cmt ?></div>
             </div>
         </div>
+        <br>
+        <hr>
+        <br>
+        <div id="item_container"></div>
     </div>
+    <div class="loading d-none"><img src="/static/img/loading.gif"></div>
 </div>
 
 <!-- profile img update modal -->

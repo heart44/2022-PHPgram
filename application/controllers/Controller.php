@@ -2,6 +2,7 @@
 namespace application\controllers;
 
 class Controller {    
+    protected $ctx;
     protected $model;
     private static $needLoginUrlArr = [
         "feed", "user/feedwin"
@@ -34,7 +35,7 @@ class Controller {
             echo json_encode($view);
         }        
     }
-    private function chkLoginUrl() {
+    private function getModel($key) {
 
     }
     

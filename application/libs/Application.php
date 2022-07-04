@@ -5,6 +5,8 @@ require_once "application/utils/UrlUtils.php";
 require_once "application/utils/SessionUtils.php";
 require_once "application/utils/FileUtils.php";
 
+//멤버필드를 메소드에서 사용하고 싶을 때 static이 안붙어 있으면 절대 static 붙여서 사용X
+
 class Application{
     
     public $controller;
@@ -20,14 +22,17 @@ class Application{
             echo "해당 컨트롤러가 존재하지 않습니다.";
             exit();
         }
-
-        if(!in_array($controller, static::$modelList)) {
-            $modelName = 'application\models\\' . $controller . 'model';
-            static::$modelList[$controller] = new $modelName();
-        }
-
+        
         $controllerName = 'application\controllers\\' . $controller . 'controller';                
-        $model = static::$modelList[$controller];
+        $model = $this->getModel($controller);
         new $controllerName($action, $model);
+    }
+
+    public static function getModel($key) {
+        if(!in_array($key, static::$modelList)) {
+            $modelName = 'application\models\\' . $key . 'model';
+            static::$modelList[$key] = new $modelName();
+        }
+        return static::$modelList[$key];
     }
 }
