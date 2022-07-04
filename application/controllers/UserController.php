@@ -87,9 +87,7 @@ class UserController extends Controller {
 
     public function follow() {
         //fromiuser(세션에 있음), toiuser 필요
-        $param = [
-            "fromiuser" => getIuser(),
-        ];
+        $param = [ "fromiuser" => getIuser(), ];
 
         switch(getMethod()) {
             case _POST:      //팔로우

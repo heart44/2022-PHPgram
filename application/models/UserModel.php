@@ -31,7 +31,7 @@ class UserModel extends Model {
         $feediuser = $param["feediuser"];
         $loginiuser = $param["loginiuser"];
         $sql = "SELECT *, (SELECT COUNT(ifeed) FROM t_feed WHERE iuser = {$feediuser}) AS feedcnt
-                    , (SELECT COUNT(fromiuser) FROM t_user_follow WHERE toiuser = {$feediuser}) AS followercnt
+                    , (SELECT COUNT(toiuser) FROM t_user_follow WHERE toiuser = {$feediuser}) AS followercnt
                     , (SELECT COUNT(fromiuser) FROM t_user_follow WHERE fromiuser = {$feediuser}) AS followingcnt
                     , (SELECT COUNT(fromiuser) FROM t_user_follow WHERE fromiuser = {$feediuser} AND toiuser = {$loginiuser}) AS youme
                     , (SELECT COUNT(fromiuser) FROM t_user_follow WHERE fromiuser = {$loginiuser} AND toiuser = {$feediuser}) AS meyou

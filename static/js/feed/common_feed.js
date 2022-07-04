@@ -6,6 +6,22 @@ const feedObj = {
     swiper: null,
     loadingElem: document.querySelector('.loading'),
     containerElem: document.querySelector('#item_container'),
+    //댓글 만드는 부분
+    makeCmtItem: function(item) {
+        const divCmtItemContainer = document.createElement('div');
+        divCmtItemContainer.className = 'd-flex flex-row mb-2';
+        let src = '/static/img/profile/' + (item.writerImg ? `${item.iuser}/${item.writerImg}` : 'user.png');
+        divCmtItemContainer.innerHTML = `
+            <div class="circleimg h24 w24">
+                <img src="${src}" class="profile pointer">
+            </div>
+            <div class="d-flex flex-row">
+                <div class="pointer bold spanNick me-2">${item.writer}</div>
+                <div>${item.cmt}<br>${getDateTimeInfo(item.regdt)}</div>
+            </div>
+        `;
+        return divCmtItemContainer;
+    },
 
     //feedlist 만드는 부분
     makeFeedList: function(list) {
@@ -145,24 +161,66 @@ const feedObj = {
             divCtnt.className = 'itemCtnt ps-3 pt-2';
         }
 
+        //댓글 리스트
+        const divCmtList = document.createElement('div');
+        divContainer.appendChild(divCmtList);
+
+        const divCmtItem = this.makeCmtItem(item.cmt);
+        divCmtList.appendChild(divCmtItem);
+
+        //댓글 더보기
+        const divCmt = document.createElement('div');
+        divContainer.appendChild(divCmt);
+
+        if(item.cmt) {
+            const divMoreCmt = document.createElement('div');
+            divCmt.appendChild(divMoreCmt);
+            divMoreCmt.className = 'ms-3';
+
+            const spanMoreCmt = document.createElement('span');
+            divMoreCmt.appendChild(spanMoreCmt);
+            spanMoreCmt.className = 'pointer';
+            spanMoreCmt.innerText = '댓글 더보기..';
+            spanMoreCmt.addEventListener('click', e => {
+
+            });
+        } 
+
         //게시글 업로드한 시간
         const divDate = document.createElement('div');
         divContainer.appendChild(divDate);
         divDate.innerHTML = `<div class="reg_date p-3">${regDtInfo}</div>`;
 
         //댓글(innerHtml말고 appendChild로 만드는 방법)
-        const divCmtList = document.createElement('div');
-        divContainer.appendChild(divCmtList);
-        
-        const divCmt = document.createElement('div');
-        divContainer.appendChild(divCmt);
+        //댓글 폼
         const divCmtForm = document.createElement('div');
         divCmtForm.className = 'd-flex flex-row';
-        divCmt.appendChild(divCmtForm);
+        divContainer.appendChild(divCmtForm);
         divCmtForm.innerHTML = `
             <input type="text" class="flex-grow-1 my_input p-2 back_color" placeholder="댓글을 입력하세요...">
             <button type="button" class="btn btn-outline-primary">게시</button>
         `;
+        //댓글 게시 이벤트
+        const inputCmt = divCmtForm.querySelector('input');
+        const btnCmtReg = divCmtForm.querySelector('button');
+        btnCmtReg.addEventListener('click', e => {
+            const param = {
+                ifeed: item.ifeed,
+                cmt: inputCmt.value
+            };
+            fetch('/feedcmt/index', {
+                method: 'POST',
+                body: JSON.stringify(param)
+            })
+            .then(res => res.json())
+            .then(res => {
+                console.log('icmt : ' + res.result);
+                if(res.result) {
+                    inputCmt.value = '';
+                    //댓글 공간에 댓글 내용 추가
+                }
+            });
+        });
 
         //유저 프로필로 가는 부분
         const feedWinList = divContainer.querySelectorAll('.feedwin');
