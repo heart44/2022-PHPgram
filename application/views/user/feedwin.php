@@ -52,7 +52,7 @@
                 </div>
                 <div class="d-flex flex-row">
                     <div class="flex-grow-1 me-3">게시물 <span class="bold"><?= $this->data->feedcnt ?></span></div>
-                    <div class="flex-grow-1 me-3">팔로워 <span class="bold"><?= $this->data->followercnt ?></span></div>
+                    <div class="flex-grow-1 me-3">팔로워 <span id="follower" class="bold" data-follower="<?= $this->data->followercnt ?>"><?= $this->data->followercnt ?></span></div>
                     <div class="flex-grow-1">팔로잉 <span class="bold"><?= $this->data->followingcnt ?></span></div>
                 </div>
                 <div class="bold"><?= $this->data->nm ?></div>

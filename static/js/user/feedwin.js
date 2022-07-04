@@ -26,7 +26,10 @@ getFeedList();
     // const url = new URL(location.href);
     // const urlParams = url.searchParams;
 
-    const btnFollow = document.querySelector('#btnFollow');   
+    const follower = document.querySelector('#follower');
+    let followerCnt = parseInt(follower.dataset.follower);
+
+    const btnFollow = document.querySelector('#btnFollow');
     if(btnFollow) {
         btnFollow.addEventListener('click', function() {
             const param = {
@@ -45,6 +48,8 @@ getFeedList();
                     .then(res => {
                         // console.log('res: ' + res);
                         if(res.result) {
+                            followerCnt -= 1;
+                            follower.innerText = followerCnt;
                             btnFollow.dataset.follow = '0';
                             btnFollow.classList.remove('btn-outline-secondary');
                             btnFollow.classList.add('btn-primary');
@@ -63,6 +68,8 @@ getFeedList();
                     }).then(res => res.json())
                     .then(res => {
                         if(res.result) {
+                            followerCnt += 1;
+                            follower.innerText = followerCnt;
                             btnFollow.dataset.follow = '1';
                             btnFollow.classList.remove('btn-primary');
                             btnFollow.classList.add('btn-outline-secondary');
