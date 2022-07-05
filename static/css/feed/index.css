@@ -8,5 +8,5 @@ main {
 font-family: var(--font) }
 .spanNick { font-weight: bold; }
 .spanNick:hover { text-decoration: underline; }
-.reg_date { font-size: x-small; color: #727272; }
+.reg_date { font-size: .7rem; color: #727272; }
 .font_loc { font-size: small; }

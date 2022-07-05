@@ -20,8 +20,10 @@ table { border-collapse: collapse; border-spacing: 0; }
 .bold { font-weight: bold; }
 .c_error-or-destructive { color: rgb(var(--ig-error-or-destructive)); }
 .c_primary-button { color: rgb(var(--primary-button)); }
+.c_lightgray { color: #b7b8b9; }
 .circleimg { display: inline-block; overflow: hidden; border-radius: 50%; border: 1px solid #ecf0f1; }
 .circleimg > img { width: 100%; height: 100%; object-fit: cover; }
+.container-center { display: flex; justify-content: center; align-items: center; }
 .d-none { display: none !important; }
 .div-top { border-top : 1px solid #e3e3e3; }
 .err { color: red; }
@@ -42,6 +44,9 @@ table { border-collapse: collapse; border-spacing: 0; }
 .my_input:focus { outline: none; }
 
 .pointer { cursor: pointer; }
+.rem0_7 { font-size: .7rem; }
+.rem0_8 { font-size: .8rem; }
+.rem0_9 { font-size: .9rem; }
 .rem1_2 { font-size: 1.2rem; }
 .rem1_5 { font-size: 1.5rem; }
 .over_y_a { overflow-y: auto; }

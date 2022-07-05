@@ -9,15 +9,16 @@ const feedObj = {
     //댓글 만드는 부분
     makeCmtItem: function(item) {
         const divCmtItemContainer = document.createElement('div');
-        divCmtItemContainer.className = 'd-flex flex-row mb-2';
-        let src = '/static/img/profile/' + (item.writerImg ? `${item.iuser}/${item.writerImg}` : 'user.png');
+        divCmtItemContainer.className = 'd-flex flex-row align-items-center mb-2 ps-3 pt-2';
+        let src = '/static/img/profile/' + (item.writerimg ? `${item.iuser}/${item.writerimg}` : 'user.png');
         divCmtItemContainer.innerHTML = `
             <div class="circleimg h24 w24">
                 <img src="${src}" class="profile pointer">
             </div>
-            <div class="d-flex flex-row">
-                <div class="pointer bold spanNick me-2">${item.writer}</div>
-                <div>${item.cmt}<br>${getDateTimeInfo(item.regdt)}</div>
+            <div class="d-flex flex-row align-items-center">
+                <div class="pointer bold spanNick ms-1 me-2">${item.writer}</div>
+                <div>${item.cmt}</div>
+                <div class="reg_date ms-2">${getDateTimeInfo(item.regdt)}</div>
             </div>
         `;
         return divCmtItemContainer;
@@ -145,8 +146,8 @@ const feedObj = {
         divFav.className = 'ps-3 d-none';
         const spanFavCnt = document.createElement('span');
         divFav.appendChild(spanFavCnt);
-        spanFavCnt.className = 'bold';
-        spanFavCnt.innerHTML = `좋아요 ${item.favCnt}개`;
+        spanFavCnt.className = 'bold rem0_9';
+        spanFavCnt.innerText = `좋아요 ${item.favCnt}개`;
         if(item.favCnt > 0) { divFav.classList.remove('d-none'); }
 
         //글 내용
@@ -164,26 +165,29 @@ const feedObj = {
         //댓글 리스트
         const divCmtList = document.createElement('div');
         divContainer.appendChild(divCmtList);
-
-        const divCmtItem = this.makeCmtItem(item.cmt);
-        divCmtList.appendChild(divCmtItem);
+        // divCmtList.className = 'ms-3';
 
         //댓글 더보기
         const divCmt = document.createElement('div');
         divContainer.appendChild(divCmt);
 
         if(item.cmt) {
-            const divMoreCmt = document.createElement('div');
-            divCmt.appendChild(divMoreCmt);
-            divMoreCmt.className = 'ms-3';
-
-            const spanMoreCmt = document.createElement('span');
-            divMoreCmt.appendChild(spanMoreCmt);
-            spanMoreCmt.className = 'pointer';
-            spanMoreCmt.innerText = '댓글 더보기..';
-            spanMoreCmt.addEventListener('click', e => {
-
-            });
+            const divCmtItem = this.makeCmtItem(item.cmt);
+            divCmtList.appendChild(divCmtItem);
+            
+            if(item.cmt.ismore === 1) {
+                const divMoreCmt = document.createElement('div');
+                divCmt.appendChild(divMoreCmt);
+                divMoreCmt.className = 'ms-3 mb-3';
+    
+                const spanMoreCmt = document.createElement('span');
+                divMoreCmt.appendChild(spanMoreCmt);
+                spanMoreCmt.className = 'pointer rem0_9 c_lightgray';
+                spanMoreCmt.innerText = '댓글 더보기..';
+                spanMoreCmt.addEventListener('click', e => {
+    
+                });
+            }
         } 
 
         //게시글 업로드한 시간
