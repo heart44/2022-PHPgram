@@ -7,13 +7,14 @@ use PDO;
 class UserModel extends Model {
     public function insUser(&$param) {
         $sql = "INSERT INTO t_user
-                ( email, pw, nm ) 
+                ( email, pw, nm, id ) 
                 VALUES 
-                ( :email, :pw, :nm )";
+                ( :email, :pw, :nm, :id )";
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(":email", $param["email"]);
         $stmt->bindValue(":pw", $param["pw"]);
         $stmt->bindValue(":nm", $param["nm"]);
+        $stmt->bindValue(":id", $param["id"]);
         $stmt->execute();
         return $stmt->rowCount();
 
@@ -72,14 +73,12 @@ class UserModel extends Model {
 
     //-------- 밑으로는 Feed --------
     public function selFeedList(&$param) {
-        $iuser = $param["iuser"];
-
         $sql = "SELECT a.*, c.id AS writer, c.mainimg
                     , IFNULL(e.cnt, 0) AS favCnt
                     , IF(f.ifeed IS NULL, 0, 1) AS isFav
                 FROM t_feed a
                 INNER JOIN t_user c
-                ON a.iuser = c.iuser and c.iuser = {$iuser}
+                ON a.iuser = c.iuser AND c.iuser = :toiuser
                 LEFT JOIN (
                     SELECT ifeed, COUNT(ifeed) AS cnt, iuser
                     FROM t_feed_fav
@@ -89,13 +88,15 @@ class UserModel extends Model {
                 LEFT JOIN (
                     SELECT ifeed
                     FROM t_feed_fav
-                    WHERE iuser = {$iuser}
+                    WHERE iuser = :loginiuser
                 ) f
                 ON a.ifeed = f.ifeed
                 ORDER BY a.ifeed DESC
                 LIMIT :startIdx, :feedItemCnt";
 
         $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(":toiuser", $param["toiuser"]);
+        $stmt->bindValue(":loginiuser", $param["loginiuser"]);
         $stmt->bindValue(":startIdx", $param["startIdx"]);
         $stmt->bindValue(":feedItemCnt", _FEED_ITEM_CNT);
         $stmt->execute();

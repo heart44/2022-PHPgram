@@ -40,6 +40,7 @@ class UserController extends Controller {
                     "email" => $_POST["email"],
                     "pw" => $_POST["pw"],
                     "nm" => $_POST["nm"],
+                    "id" => $_POST["id"],
                 ];
                 $param["pw"] = password_hash($param["pw"], PASSWORD_BCRYPT);
 
@@ -74,12 +75,14 @@ class UserController extends Controller {
             $startIdx = ($page - 1) * _FEED_ITEM_CNT;
             $param = [
                 "startIdx" => $startIdx,
-                "iuser" => $iuser,
+                "toiuser" => $_GET["iuser"],
+                "loginiuser" => getIuser()
             ];
 
             $list = $this->model->selFeedList($param);
             foreach ($list as $item) {
-                $item->imgList = Application::getModel("feed")->selFeedImgList($item);
+                $param2 = [ "ifeed" => $item->ifeed ];
+                $item->imgList = Application::getModel("feed")->selFeedImgList($param2);
             }
             return $list;
         }

@@ -33,8 +33,8 @@ getFeedList();
     if(btnFollow) {
         btnFollow.addEventListener('click', function() {
             const param = {
-                // toiuser: parseInt(urlParams.get('iuser'))
-                toiuser: parseInt(gData.dataset.toiuser)
+                toiuser: parseInt(url.searchParams.get('iuser'))
+                // toiuser: parseInt(gData.dataset.toiuser)
             };
             console.log(param);
             

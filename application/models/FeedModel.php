@@ -59,12 +59,29 @@ class FeedModel extends Model {
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
-    public function selFeedImgList($param) {
+    public function selFeedAfterReg(&$param) {
+        $sql = "SELECT a.*, c.id AS writer, c.mainimg
+                    , 0 AS favCnt
+                    , 0 AS isFav
+                FROM t_feed a
+                INNER JOIN t_user c
+                ON a.iuser = c.iuser
+                WHERE a.ifeed = :ifeed
+                ORDER BY a.ifeed DESC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(":ifeed", $param["ifeed"]);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
+    public function selFeedImgList(&$param) {
         $sql = "SELECT img FROM t_feed_img
                 WHERE ifeed = :ifeed";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(":ifeed", $param->ifeed);
+        $stmt->bindValue(":ifeed", $param["ifeed"]);
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_OBJ);

@@ -6,7 +6,7 @@ main {
 .w100p_mw614 { width: 100%; max-width: 614px; }
 #item_container > .item { border: 1px solid #dfdfdf; border-radius: 8px; background-color: #fff;
 font-family: var(--font) }
-.spanNick { font-weight: bold; }
+.spanNick { font-family: 'Binggrae-Bold'; }
 .spanNick:hover { text-decoration: underline; }
 .reg_date { font-size: .7rem; color: #727272; }
 .font_loc { font-size: small; }
