@@ -5,7 +5,7 @@
         <div class="d-flex flkex-row">
             <div class="d-flex flex-column justify-content-center me-3">
                 <div class="circleimg h150 w150 pointer feedwin">
-                    <img data-bs-toggle="modal" data-bs-target="#changeProfileImgModal" src='/static/img/profile/<?= $this->data->iuser ?>/<?= $this->data->mainimg ?>' onerror='this.error=null;this.src="/static/img/profile/user.png"'>
+                    <img class="profileimg" data-bs-toggle="modal" data-bs-target="#changeProfileImgModal" src='/static/img/profile/<?= $this->data->iuser ?>/<?= $this->data->mainimg ?>' onerror='this.error=null;this.src="/static/img/profile/user.png"'>
                 </div>
             </div>
             <div class="flex-grow-1 d-flex flex-column justify-content-evenly">
@@ -30,7 +30,7 @@
                     <!-- 강사님 소스 -->
                     <?php
                         if($this->data->iuser === getIuser()) {
-                            echo '<button type="button" id="btnModProfile" class="btn btn-outline-secondary">프로필 수정</button>';
+                            echo '<button type="button" id="btnModProfile" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#changeProfileImgModal">프로필 수정</button>';
                         } else {
                             $youme = $this->data->youme;
                             $meyou = $this->data->meyou;
@@ -51,7 +51,7 @@
                     ?>
                 </div>
                 <div class="d-flex flex-row">
-                    <div class="flex-grow-1 me-3">게시물 <span class="bold"><?= $this->data->feedcnt ?></span></div>
+                    <div class="flex-grow-1 me-3">게시물 <span id="myPost" class="bold"><?= $this->data->feedcnt ?></span></div>
                     <div class="flex-grow-1 me-3">팔로워 <span id="follower" class="bold" data-follower="<?= $this->data->followercnt ?>"><?= $this->data->followercnt ?></span></div>
                     <div class="flex-grow-1">팔로잉 <span class="bold"><?= $this->data->followingcnt ?></span></div>
                 </div>
@@ -68,6 +68,7 @@
 </div>
 
 <!-- profile img update modal -->
+<?php if($this->data->iuser === getIuser()) { ?>
 <div class="modal fade" id="changeProfileImgModal" tabindex="-1" aria-labelledby="changeProfileImgModalLabel" aria-hidden="true">
     <div class="modal-dialog profile-dialog modal-dialog-centered modal-md">
         <div class="modal-content profile-content">
@@ -75,14 +76,20 @@
                 <h5 class="modal-title profile-title bold" id="changeProfileImgModalLabel">프로필 사진 바꾸기</h5>
             </div>
             <div class="modal_item">
-                <span class="bold pointer c_primary-button">사진 업로드</span>
+                <span id="btnUpdProfilePic" class="bold pointer c_primary-button">사진 업로드</span>
             </div>
+            <?php if(getLoginUser()->mainimg) { ?>
             <div class="modal_item">
-                <span class="bold pointer c_error-or-destructive">현재 사진 삭제</span>
+                <span id="btnDelCurrentProfilePic" class="bold pointer c_error-or-destructive">현재 사진 삭제</span>
             </div>
+            <?php } ?>
             <div class="modal_item">
-                <span class="pointer" data-bs-dismiss="modal">취소</span>
+                <span class="pointer" id="btnProfileImgModalClose" data-bs-dismiss="modal">취소</span>
             </div>
         </div>
+        <form class="d-none">
+            <input type="file" accept="image/*" name="imgs">
+        </form>
     </div>
 </div>
+<?php } ?>

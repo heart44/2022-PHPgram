@@ -4,6 +4,49 @@ const feedObj = {
     itemLength: 0,
     currentPage: 1,
     swiper: null,
+    getFeedUrl: '',
+    iuser: 0,
+
+    //인피니티 스크롤
+    setScrollInfinity: function() {
+        window.addEventListener('scroll', e => {
+            if(this.isLoading()) { return; }
+
+            //따로 적은거랑 똑같음 (구조분해 할당, js만 됨), 주의점 : 멤버필드 이름이랑 똑같이 해야함
+            const {
+                scrollTop,
+                scrollHeight,   //전체 스크롤 길이
+                clientHeight    //현재 스크롤 길이
+            } = document.documentElement;
+
+            if(scrollTop + clientHeight >= scrollHeight - 10 && this.itemLength === this.limit) {
+                this.getFeedList();
+            }
+
+        }, { /* 옵션 추가 가능 */ passive: true });
+    },
+
+    //list 가져오는 통신 부분
+    getFeedList: function() {
+        this.itemLength = 0;
+        this.showLoading();
+        const param = {
+            page: this.currentPage++,
+            iuser: this.iuser
+        }
+        fetch(this.getFeedUrl + encodeQueryString(param))
+        .then(res => res.json())
+        .then(list => {
+            this.itemLength = list.length;
+            this.makeFeedList(list);
+        })
+        .catch(e => {
+            console.error(e);
+            this.hideLoading();
+        });
+    },
+
+    //이미지 스와이프 화살표 함수
     refreshSwipe: function() {
         if (this.swiper !== null) { this.swiper = null; }
         this.swiper = new Swiper('.swiper', {
@@ -43,7 +86,7 @@ const feedObj = {
         let src = '/static/img/profile/' + (item.writerimg ? `${item.iuser}/${item.writerimg}` : 'user.png');
         divCmtItemContainer.innerHTML = `
             <div class="circleimg h24 w24">
-                <img src="${src}" class="profile pointer cmtFeedWinList">
+                <img src="${src}" class="profile pointer cmtFeedWinList profileimg">
             </div>
             <div class="d-flex flex-row align-items-center">
                 <div class="pointer bold spanNick ms-1 me-2 cmtFeedWinList">${item.writer}</div>
@@ -85,7 +128,7 @@ const feedObj = {
         const regDtInfo = getDateTimeInfo(item.regdt);
         divTop.className = 'd-flex flex-row ps-3 pe-3';
 
-        const writerImg = `<img src='/static/img/profile/${item.iuser}/${item.mainimg}'
+        const writerImg = `<img class="profileimg" src='/static/img/profile/${item.iuser}/${item.mainimg}'
                             onerror='this.error=null;this.src="/static/img/profile/user.png"'>`;
         
         divTop.innerHTML = `
@@ -147,12 +190,23 @@ const feedObj = {
                 if(res.result) {
                     item.isFav = 1 - item.isFav;    //0 -> 1, 1 -> 0
                     if(item.isFav === 0) {  //좋아요 취소
+                        //좋아요 갯수 변경
+                        item.favCnt--;
+                        if(item.favCnt === 0) {
+                            divFav.classList.add('d-none');
+                        }
+
                         heartIcon.classList.remove('fas');
                         heartIcon.classList.add('far');
                     } else {    //좋아요 처리
+                        //좋아요 갯수 변경
+                        item.favCnt++;
+                        divFav.classList.remove('d-none');
+
                         heartIcon.classList.remove('far');
                         heartIcon.classList.add('fas');
                     }
+                    spanFavCnt.innerText = `좋아요 ${item.favCnt}개`;
                 } else {
                     alert('좋아요를 할 수 없습니다.');
                 }
@@ -277,9 +331,11 @@ const feedObj = {
 
     //새고했을 때 뜨는 로딩 이미지
     showLoading: function() { this.loadingElem.classList.remove('d-none'); },
-    hideLoading: function() { this.loadingElem.classList.add('d-none'); }
+    hideLoading: function() { this.loadingElem.classList.add('d-none'); },
+    isLoading: function() { return !this.loadingElem.classList.contains('d-none'); }
 }
 
+//프로필 주소로 이동하는 함수
 function moveToFeedWin(iuser) {
     location.href = `/user/feedwin?iuser=${iuser}`;
 }
@@ -319,6 +375,9 @@ function moveToFeedWin(iuser) {
                     imgElem.src = reader.result;
                 };
 
+                //게시물 갯수 id
+                const myPost = document.querySelector('#myPost');
+
                 const shareBtnElem = body.querySelector('button');
                 shareBtnElem.addEventListener('click', function () {
                     const files = frmElem.imgs.files;
@@ -347,6 +406,13 @@ function moveToFeedWin(iuser) {
                             const feedItem = feedObj.makeFeedItem(myJson);
                             feedObj.containerElem.prepend(feedItem);
                             feedObj.refreshSwipe();
+
+                            //게시글 등록 시 내 피드 게시물 갯수 변경
+                            const myPostCnt = parseInt(myPost.innerText);
+                            myPost.innerText = myPostCnt + 1;
+
+                            //게시글 등록 시 최상위로 올라감
+                            window.scrollTo(0, 0);
                         }
                     });
                 });

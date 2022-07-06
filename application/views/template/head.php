@@ -2,6 +2,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/x-icon" href="https://cdn.pixabay.com/photo/2021/06/15/12/17/instagram-6338401_960_720.png">
     <title><?= isset($this->title) ? $this->title : _SERVICE_NM ?></title>
     <link rel="stylesheet" href="/static/css/common.css">
     <?php 

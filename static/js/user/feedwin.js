@@ -1,31 +1,21 @@
 const url = new URL(location.href);
 
-//list 가져오는 통신 부분
-function getFeedList() {
-    if (!feedObj) { return; }
-
-    feedObj.showLoading();
-    const param = {
-        page: feedObj.currentPage++,
-        iuser: url.searchParams.get('iuser')
-    }
-    fetch('/user/feed' + encodeQueryString(param))
-    .then(res => res.json())
-    .then(list => {
-        feedObj.makeFeedList(list);
-    })
-    .catch(e => {
-        console.error(e);
-        feedObj.hideLoading();
-    });
+if (feedObj) { 
+    feedObj.iuser = parseInt(url.searchParams.get('iuser'));
+    feedObj.getFeedUrl = '/user/feed';
+    feedObj.getFeedList();
 }
-getFeedList();
 
 (function() {
-    const gData = document.querySelector('#gData');
+    // const gData = document.querySelector('#gData');
     const follower = document.querySelector('#follower');
     // let followerCnt = parseInt(follower.dataset.follower);
+    const btnUpdProfilePic = document.querySelector('#btnUpdProfilePic');
+    const btnClose = document.querySelector('#btnModalClose');
+    const btnDelCurrentProfilePic = document.querySelector('#btnDelCurrentProfilePic');
+    const btnProfileImgModalClose = document.querySelector('#btnProfileImgModalClose');
 
+    //팔로우 버튼
     const btnFollow = document.querySelector('#btnFollow');
     if(btnFollow) {
         btnFollow.addEventListener('click', function() {
@@ -45,9 +35,11 @@ getFeedList();
                     .then(res => {
                         // console.log('res: ' + res);
                         if(res.result) {
-                            const followerCnt = parseInt(follower.innerText);     //강사님 방법
+                            //팔로우 갯수 변경 (강사님 방법)
+                            const followerCnt = parseInt(follower.innerText);
                             follower.innerText = followerCnt - 1;
-                            // follower.dataset.follower = followerCnt;
+                            // follower.dataset.follower = followerCnt;     //데이터셋 사용
+
                             btnFollow.dataset.follow = '0';
                             btnFollow.classList.remove('btn-outline-secondary');
                             btnFollow.classList.add('btn-primary');
@@ -66,9 +58,11 @@ getFeedList();
                     }).then(res => res.json())
                     .then(res => {
                         if(res.result) {
-                            const followerCnt = parseInt(follower.innerText);     //강사님 방법
+                            //팔로우 갯수 변경 (강사님 방법)
+                            const followerCnt = parseInt(follower.innerText);
                             follower.innerText = followerCnt + 1;
-                            // follower.dataset.follower = followerCnt;
+                            // follower.dataset.follower = followerCnt;     //데이터셋 사용
+
                             btnFollow.dataset.follow = '1';
                             btnFollow.classList.remove('btn-primary');
                             btnFollow.classList.add('btn-outline-secondary');
@@ -79,4 +73,51 @@ getFeedList();
             }
         });
     } 
+
+    //프로필 사진 업로드
+    if(btnUpdProfilePic) {
+        const changeProfileImgModal = document.querySelector('#changeProfileImgModal');
+        const updProfilePic = document.querySelector('input');
+        const frmElem = changeProfileImgModal.querySelector('form');
+
+        btnUpdProfilePic.addEventListener('click', e => {
+            updProfilePic.click();
+        });
+
+        updProfilePic.addEventListener('change', e => {
+            const files = frmElem.imgs.files;
+            const fData = new FormData();
+            fData.append('imgs[]', files[0]);
+            fetch('/user/profile', {
+                method: 'POST',
+                body: fData
+            }).then(res => res.json())
+            .then(res => {
+                const profileimgList = document.querySelectorAll('.profileimg');
+                profileimgList.forEach(item => {
+                    item.src = `/static/img/profile/${parseInt(url.searchParams.get('iuser'))}/${res.result}`;
+                });
+                if(res) {
+                    btnClose.click();
+                }
+            });
+        });
+    }
+
+    //현재 프로필 사진 삭제
+    if(btnDelCurrentProfilePic) {
+        btnDelCurrentProfilePic.addEventListener('click', e => {
+            fetch('/user/profile', {method: 'DELETE'})
+            .then(res => res.json())
+            .then(res => {
+                if(res.result) {
+                    const profileimgList = document.querySelectorAll('.profileimg');
+                    profileimgList.forEach(item => {
+                        item.src = '/static/img/profile/user.png';
+                    });
+                }
+                btnProfileImgModalClose.click();
+            });
+        });
+    }
 })();
