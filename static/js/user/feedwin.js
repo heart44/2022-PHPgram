@@ -23,11 +23,8 @@ getFeedList();
 
 (function() {
     const gData = document.querySelector('#gData');
-    // const url = new URL(location.href);
-    // const urlParams = url.searchParams;
-
     const follower = document.querySelector('#follower');
-    let followerCnt = parseInt(follower.dataset.follower);
+    // let followerCnt = parseInt(follower.dataset.follower);
 
     const btnFollow = document.querySelector('#btnFollow');
     if(btnFollow) {
@@ -48,8 +45,9 @@ getFeedList();
                     .then(res => {
                         // console.log('res: ' + res);
                         if(res.result) {
-                            followerCnt -= 1;
-                            follower.innerText = followerCnt;
+                            const followerCnt = parseInt(follower.innerText);     //강사님 방법
+                            follower.innerText = followerCnt - 1;
+                            // follower.dataset.follower = followerCnt;
                             btnFollow.dataset.follow = '0';
                             btnFollow.classList.remove('btn-outline-secondary');
                             btnFollow.classList.add('btn-primary');
@@ -68,8 +66,9 @@ getFeedList();
                     }).then(res => res.json())
                     .then(res => {
                         if(res.result) {
-                            followerCnt += 1;
-                            follower.innerText = followerCnt;
+                            const followerCnt = parseInt(follower.innerText);     //강사님 방법
+                            follower.innerText = followerCnt + 1;
+                            // follower.dataset.follower = followerCnt;
                             btnFollow.dataset.follow = '1';
                             btnFollow.classList.remove('btn-primary');
                             btnFollow.classList.add('btn-outline-secondary');

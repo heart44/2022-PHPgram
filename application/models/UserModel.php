@@ -78,7 +78,7 @@ class UserModel extends Model {
                     , IF(f.ifeed IS NULL, 0, 1) AS isFav
                 FROM t_feed a
                 INNER JOIN t_user c
-                ON a.iuser = c.iuser AND c.iuser = :toiuser
+                ON a.iuser = c.iuser
                 LEFT JOIN (
                     SELECT ifeed, COUNT(ifeed) AS cnt, iuser
                     FROM t_feed_fav
@@ -91,6 +91,7 @@ class UserModel extends Model {
                     WHERE iuser = :loginiuser
                 ) f
                 ON a.ifeed = f.ifeed
+                WHERE c.iuser = :toiuser
                 ORDER BY a.ifeed DESC
                 LIMIT :startIdx, :feedItemCnt";
 
