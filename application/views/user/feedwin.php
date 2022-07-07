@@ -5,7 +5,7 @@
         <div class="d-flex flkex-row">
             <div class="d-flex flex-column justify-content-center me-3">
                 <div class="circleimg h150 w150 pointer feedwin">
-                    <img class="profileimg" data-bs-toggle="modal" data-bs-target="#changeProfileImgModal" src='/static/img/profile/<?= $this->data->iuser ?>/<?= $this->data->mainimg ?>' onerror='this.error=null;this.src="/static/img/profile/user.png"'>
+                    <img class="profileimg" id="btnChangeProfileModal" data-bs-toggle="modal" data-bs-target="#changeProfileImgModal" src='/static/img/profile/<?= $this->data->iuser ?>/<?= $this->data->mainimg ?>' onerror='this.error=null;this.src="/static/img/profile/user.png"'>
                 </div>
             </div>
             <div class="flex-grow-1 d-flex flex-column justify-content-evenly">
@@ -30,7 +30,7 @@
                     <!-- 강사님 소스 -->
                     <?php
                         if($this->data->iuser === getIuser()) {
-                            echo '<button type="button" id="btnModProfile" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#changeProfileImgModal">프로필 수정</button>';
+                            echo '<button type="button" id="btnModProfile" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#changeProfileModal">프로필 수정</button>';
                         } else {
                             $youme = $this->data->youme;
                             $meyou = $this->data->meyou;
@@ -75,14 +75,14 @@
             <div class="modal-header justify-content-center">
                 <h5 class="modal-title profile-title bold" id="changeProfileImgModalLabel">프로필 사진 바꾸기</h5>
             </div>
-            <div class="modal_item">
-                <span id="btnUpdProfilePic" class="bold pointer c_primary-button">사진 업로드</span>
+            <div class="modal_item" data-bs-target="#changeProfileImg" data-bs-toggle="modal" id="btnUpdProfilePic">
+                <span class="bold pointer c_primary-button">사진 업로드</span>
             </div>
-            <?php if(getLoginUser()->mainimg) { ?>
-            <div class="modal_item">
+            <!-- <?php if(isset(getLoginUser()->mainimg)) { ?>
+            <div class="modal_item" id="btnDelCurrentProfileItem">
                 <span id="btnDelCurrentProfilePic" class="bold pointer c_error-or-destructive">현재 사진 삭제</span>
             </div>
-            <?php } ?>
+            <?php } ?> -->
             <div class="modal_item">
                 <span class="pointer" id="btnProfileImgModalClose" data-bs-dismiss="modal">취소</span>
             </div>
@@ -93,3 +93,51 @@
     </div>
 </div>
 <?php } ?>
+
+<!-- 사진 업로드 시 모달창 한 번 더 띄움 -->
+<div class="modal fade" id="changeProfileImg" tabindex="-1" aria-labelledby="changeProfileImgLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title profile-title bold" id="changeProfileImgLabel">사진 업로드</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="circleimg h300 w300 pointer">
+                <img id="currentProfileImg" class="profileimg"
+                    src="/static/img/profile/<?= $this->data->iuser ?>/<?= $this->data->mainimg ?>"
+                    onerror='this.error=null;this.src="/static/img/profile/user.png"'>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="changeBtn">저장</button>
+            </div>
+        </div>
+        <form class="d-none">
+            <input type="file" accept="image/*" name="imgs">
+        </form>
+    </div>
+</div>
+
+<!-- 프로필 수정 -->
+<div class="modal fade" id="changeProfileModal" tabindex="-1" aria-labelledby="changeProfileImgModalLabel" aria-hidden="true">
+    <div class="modal-dialog profile-dialog modal-dialog-centered modal-md">
+        <div class="modal-content profile-content">
+            <div class="modal-header justify-content-center">
+                <h5 class="modal-title profile-title bold" id="changeProfileImgModalLabel">프로필 수정</h5>
+            </div>
+            <div class="modal_item flex-column" id="">
+                <span class="bold">아이디 변경</span>
+                <input type="text" name="modId" value="<?= $this->data->id ?>">
+            </div>
+            <div class="modal_item" id="">
+                <span class="bold">상태 메세지 변경</span>
+                <textarea name="" id="" cols="30" rows="10"><?= $this->data->cmt ?></textarea>
+            </div>
+            <div class="modal_item justify-content-around">
+                <span class="pointer" id="btnProfileImgModalClose" data-bs-dismiss="modal">취소</span>
+                <span class="pointer">확인</span>
+            </div>
+        </div>
+    </div>
+</div>

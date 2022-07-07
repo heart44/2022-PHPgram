@@ -37,6 +37,7 @@ table { border-collapse: collapse; border-spacing: 0; }
 .err { color: red; }
 .container-center { display: flex; justify-content: center; align-items: center; }
 .h24 { height: 24px; }
+.h25 { height: 27px; }
 .h30 { height: 30px; }
 .h40 { height: 40px; }
 .h100 { height: 100px; }
@@ -59,8 +60,10 @@ table { border-collapse: collapse; border-spacing: 0; }
 .rem1_5 { font-size: 1.5rem; }
 .over_y_a { overflow-y: auto; }
 .size_box_100 { position: relative; height: 100px; }
+textarea { resize: none; }
 
 .w24 { width: 24px; }
+.w25 { width: 27px; }
 .w30 { width: 30px; }
 .w40 { width: 40px; }
 .w100 { width: 100px; }

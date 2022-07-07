@@ -10,10 +10,6 @@ if (feedObj) {
     // const gData = document.querySelector('#gData');
     const follower = document.querySelector('#follower');
     // let followerCnt = parseInt(follower.dataset.follower);
-    const btnUpdProfilePic = document.querySelector('#btnUpdProfilePic');
-    const btnClose = document.querySelector('#btnModalClose');
-    const btnDelCurrentProfilePic = document.querySelector('#btnDelCurrentProfilePic');
-    const btnProfileImgModalClose = document.querySelector('#btnProfileImgModalClose');
 
     //팔로우 버튼
     const btnFollow = document.querySelector('#btnFollow');
@@ -74,36 +70,84 @@ if (feedObj) {
         });
     } 
 
+    const gData2 = document.querySelector('#gData').dataset.mainimg;    //head gData에 mainimg 데이터셋 추가 했음
+    const btnUpdProfilePic = document.querySelector('#btnUpdProfilePic');   //사진 업로드 id
+    const btnProfileImgModalClose = document.querySelector('#btnProfileImgModalClose'); //프로필 수정 눌렀을 때 뜨는 모달 닫기
+    
+    //현재 사진 삭제하는 아이템 생성
+    const modalItem = document.createElement('div');
+    modalItem.className = 'modal_item';
+    modalItem.id = 'btnDelCurrentProfileItem';
+    btnUpdProfilePic.after(modalItem);
+    modalItem.innerHTML = `
+        <span id="btnDelCurrentProfilePic" class="bold pointer c_error-or-destructive">현재 사진 삭제</span>
+    `;
+    //위에 만들어졌는데 만약에 이미지 없으면 d-none 주기
+    if(gData2 === '') {
+        console.log('지금 이미지 없음');
+        modalItem.classList.add('d-none');
+    }
+
     //프로필 사진 업로드
     if(btnUpdProfilePic) {
-        const changeProfileImgModal = document.querySelector('#changeProfileImgModal');
-        const updProfilePic = document.querySelector('input');
-        const frmElem = changeProfileImgModal.querySelector('form');
+        const changeProfileImg = document.querySelector('#changeProfileImg');
+        const frmElem = changeProfileImg.querySelector('form');
+        const imgElem = changeProfileImg.querySelector('#currentProfileImg');
+        const btnClose = changeProfileImg.querySelector('.btn-close');
 
-        btnUpdProfilePic.addEventListener('click', e => {
-            updProfilePic.click();
+        imgElem.addEventListener('click', e => {
+            frmElem.imgs.click();
         });
 
-        updProfilePic.addEventListener('change', e => {
-            const files = frmElem.imgs.files;
-            const fData = new FormData();
-            fData.append('imgs[]', files[0]);
-            fetch('/user/profile', {
-                method: 'POST',
-                body: fData
-            }).then(res => res.json())
-            .then(res => {
-                const profileimgList = document.querySelectorAll('.profileimg');
-                profileimgList.forEach(item => {
-                    item.src = `/static/img/profile/${parseInt(url.searchParams.get('iuser'))}/${res.result}`;
+        frmElem.imgs.addEventListener('change', e => {
+            if(e.target.files.length > 0) {
+                const imgSource = e.target.files[0];
+                const reader = new FileReader();
+                reader.readAsDataURL(imgSource);
+                reader.onload = function () {
+                    imgElem.src = reader.result;
+                };
+
+                const changeBtn = changeProfileImg.querySelector('#changeBtn');
+                changeBtn.addEventListener('click', e => {
+                    const files = frmElem.imgs.files[0];
+                    const fData = new FormData();
+                    fData.append('imgs[]', files);
+                    fetch('/user/profile', {
+                        method: 'POST',
+                        body: fData
+                    }).then(res => res.json())
+                    .then(res => {
+                        // console.log(parseInt(url.searchParams.get('iuser')));
+                        // console.log(res);
+                        if (res) {
+                            console.log(res.result);
+                            const gData = document.querySelector('#gData').dataset.loginiuser;
+                            const cmtProfileimgList = document.querySelectorAll('#cmtProfileimg');
+                            cmtProfileimgList.forEach(item => {
+                                console.log('gdata:'+gData);
+                                console.log('item.iuser:'+item.dataset.iuser);
+                                if(parseInt(item.dataset.iuser) !== parseInt(gData)) {
+                                    console.log(item);
+                                    item.classList.remove('profileimg');
+                                }
+                            });
+                            const profileimgList = document.querySelectorAll('.profileimg');
+                            profileimgList.forEach(item => {
+                                item.src = `/static/img/profile/${parseInt(url.searchParams.get('iuser'))}/${res.result}`;
+                            });
+
+                            btnClose.click();
+                            //이미지 등록하면 d-none 삭제
+                            modalItem.classList.remove('d-none');
+                        }
+                    });
                 });
-                if(res) {
-                    btnClose.click();
-                }
-            });
+            }
         });
     }
 
+    const btnDelCurrentProfilePic = document.querySelector('#btnDelCurrentProfilePic');
     //현재 프로필 사진 삭제
     if(btnDelCurrentProfilePic) {
         btnDelCurrentProfilePic.addEventListener('click', e => {
@@ -111,12 +155,23 @@ if (feedObj) {
             .then(res => res.json())
             .then(res => {
                 if(res.result) {
+                    const gData = document.querySelector('#gData').dataset.loginiuser;
+                    const cmtProfileimgList = document.querySelectorAll('#cmtProfileimg');
+                    cmtProfileimgList.forEach(item => {
+                        console.log('gdata:'+gData);
+                        console.log('item.iuser:'+item.dataset.iuser);
+                        if(parseInt(item.dataset.iuser) !== parseInt(gData)) {
+                            item.classList.remove('profileimg');
+                        }
+                    });
                     const profileimgList = document.querySelectorAll('.profileimg');
                     profileimgList.forEach(item => {
                         item.src = '/static/img/profile/user.png';
                     });
                 }
                 btnProfileImgModalClose.click();
+                //이미지 삭제하면 d-none 다시 만들어줌
+                modalItem.classList.add('d-none');
             });
         });
     }

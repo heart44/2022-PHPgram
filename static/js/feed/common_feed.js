@@ -81,12 +81,13 @@ const feedObj = {
 
     //댓글 만드는 부분
     makeCmtItem: function(item) {
+        // const lData = document.querySelector('#lData').dataset.toiuser;
         const divCmtItemContainer = document.createElement('div');
         divCmtItemContainer.className = 'd-flex flex-row align-items-center ps-3 pt-2';
         let src = '/static/img/profile/' + (item.writerimg ? `${item.iuser}/${item.writerimg}` : 'user.png');
         divCmtItemContainer.innerHTML = `
-            <div class="circleimg h24 w24">
-                <img src="${src}" class="profile pointer cmtFeedWinList profileimg">
+            <div class="circleimg h30 w30">
+                <img src="${src}" class="profile pointer cmtFeedWinList profileimg" id="cmtProfileimg" data-iuser="${item.iuser}">
             </div>
             <div class="d-flex flex-row align-items-center">
                 <div class="pointer bold spanNick ms-1 me-2 cmtFeedWinList">${item.writer}</div>
@@ -164,6 +165,24 @@ const feedObj = {
             divSwiperSlide.appendChild(img);
             img.className = 'w100p_mw614';
             img.src = `/static/img/feed/${item.ifeed}/${imgObj.img}`;
+
+            // 이미지 클릭시 이미지 보이기
+            img.addEventListener('click', () => {
+                const imgBox = document.createElement('div');
+                imgBox.classList = 'modal modal-img d-flex pointer imgBox';
+                imgBox.tabIndex = '2';
+                imgBox.innerHTML = `
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content img-modal-content">
+                            <img src="${img.src}">
+                        </div>
+                    </div>`;
+                const main = document.querySelector('main');
+                main.appendChild(imgBox);
+                imgBox.addEventListener('click', () => {
+                    imgBox.remove();
+                });
+            });
         });
 
         //좋아요, 디엠 버튼 만드는 부분
@@ -350,11 +369,11 @@ function moveToFeedWin(iuser) {
         const btnClose = modal.querySelector('.btn-close');
         //이미지 값이 변하면
         frmElem.imgs.addEventListener('change', function (e) {
-            console.log(`length: ${e.target.files.length}`);
+            // console.log(`length: ${e.target.files.length}`);
             if (e.target.files.length > 0) {
                 body.innerHTML = `
                     <div>
-                        <div class="d-flex flex-md-row">
+                        <div class="d-flex flex-md-row flex-wrap">
                             <div class="flex-grow-1 h-full"><img id="id-img" class="w300"></div>
                             <div class="ms-1 w250 d-flex flex-column">                
                                 <textarea placeholder="문구 입력..." class="flex-grow-1 p-1"></textarea>

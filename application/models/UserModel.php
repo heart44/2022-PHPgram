@@ -48,10 +48,10 @@ class UserModel extends Model {
 
     public function updUser(&$param) {
         $sql = "UPDATE t_user 
-                SET moddt = now()";
+                SET moddt = now() ";
         if(isset($param["mainimg"])) {
             $mainimg = $param["mainimg"];
-            $sql .= ", mainimg = {$mainimg}";
+            $sql .= ", mainimg = '$mainimg'";
         }
         if(isset($param["delMainImg"])) {
             $sql .= ", mainimg = null";

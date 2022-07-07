@@ -107,19 +107,19 @@ class UserController extends Controller {
     public function profile() {
         switch(getMethod()) {
             case _POST:
-                foreach($_FILES['imgs']['name'] as $key => $originFileNm) {
-                    $saveDir = _IMG_PATH . "/profile/" . getIuser();
-                    $path = "static/img/profile/" . getMainimgSrc();
-                    unlink($path);
-                    
-                    $tempName = $_FILES["imgs"]["tmp_name"][$key];
-                    $randFileNm = getRandomFileNm($originFileNm);
-                    if(move_uploaded_file($tempName, $saveDir . "/" . $randFileNm)) {
-                        $imgParam = ["mainimg" => $randFileNm, "iuser" => getIuser()];
-                        $this->model->updUser($imgParam);
-                        getLoginUser()->mainimg = $randFileNm;
-                    }
+                $saveDir = _IMG_PATH . "/profile/" . getIuser();
+                if(getLoginUser()->mainimg) {
+                    unlink($saveDir . "/" . getLoginUser()->mainimg);
                 }
+
+                $tempName = $_FILES["imgs"]["tmp_name"][0];
+                $randFileNm = getRandomFileNm($_FILES['imgs']['name'][0]);
+                if (move_uploaded_file($tempName, $saveDir . "/" . $randFileNm)) {
+                    $imgParam = ["mainimg" => $randFileNm, "iuser" => getIuser()];
+                    $this->model->updUser($imgParam);
+                    getLoginUser()->mainimg = $randFileNm;
+                }
+
                 return [_RESULT => $randFileNm];
             case _DELETE:
                 $loginUser = getLoginUser();
