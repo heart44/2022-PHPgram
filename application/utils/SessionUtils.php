@@ -10,5 +10,5 @@
     }
 
     function getMainimgSrc() {
-        return getIuser() . "/" . getLoginUser()->mainimg;
+        return getIuser() . "/" . (isset(getLoginUser()->mainimg) ? getLoginUser()->mainimg : "");
     }

@@ -28,4 +28,4 @@
         }
     ?>
 </head>
-<div id="gData" data-loginiuser="<?=getIuser()?>" data-mainimg="<?=getLoginUser()->mainimg?>"></div>
+<div id="gData" data-loginiuser="<?=getIuser()?>" data-mainimg="<?=(isset(getLoginUser()->mainimg) ? getLoginUser()->mainimg : "")?>"></div>
