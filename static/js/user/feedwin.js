@@ -70,23 +70,23 @@ if (feedObj) {
         });
     } 
 
-    const gData2 = document.querySelector('#gData').dataset.mainimg;    //head gData에 mainimg 데이터셋 추가 했음
+    // const gData2 = document.querySelector('#gData').dataset.mainimg;    //head gData에 mainimg 데이터셋 추가 했음
     const btnUpdProfilePic = document.querySelector('#btnUpdProfilePic');   //사진 업로드 id
     const btnProfileImgModalClose = document.querySelector('#btnProfileImgModalClose'); //프로필 수정 눌렀을 때 뜨는 모달 닫기
     
-    //현재 사진 삭제하는 아이템 생성
-    const modalItem = document.createElement('div');
-    modalItem.className = 'modal_item';
-    modalItem.id = 'btnDelCurrentProfileItem';
-    btnUpdProfilePic.after(modalItem);
-    modalItem.innerHTML = `
-        <span id="btnDelCurrentProfilePic" class="bold pointer c_error-or-destructive">현재 사진 삭제</span>
-    `;
-    //위에 만들어졌는데 만약에 이미지 없으면 d-none 주기
-    if(gData2 === '') {
-        console.log('지금 이미지 없음');
-        modalItem.classList.add('d-none');
-    }
+    // //현재 사진 삭제하는 아이템 생성
+    // const modalItem = document.createElement('div');
+    // modalItem.className = 'modal_item';
+    // modalItem.id = 'btnDelCurrentProfileItem';
+    // btnUpdProfilePic.after(modalItem);
+    // modalItem.innerHTML = `
+    //     <span id="btnDelCurrentProfilePic" class="bold pointer c_error-or-destructive">현재 사진 삭제</span>
+    // `;
+    // //위에 만들어졌는데 만약에 이미지 없으면 d-none 주기
+    // if(gData2 === '') {
+    //     console.log('지금 이미지 없음');
+    //     modalItem.classList.add('d-none');
+    // }
 
     //프로필 사진 업로드
     if(btnUpdProfilePic) {
@@ -122,6 +122,7 @@ if (feedObj) {
                         // console.log(res);
                         if (res) {
                             console.log(res.result);
+                            const modalItem = document.querySelector('#btnDelCurrentProfileItem');
                             const gData = document.querySelector('#gData').dataset.loginiuser;
                             const cmtProfileimgList = document.querySelectorAll('#cmtProfileimg');
                             cmtProfileimgList.forEach(item => {
@@ -155,6 +156,7 @@ if (feedObj) {
             .then(res => res.json())
             .then(res => {
                 if(res.result) {
+                    const modalItem = document.querySelector('#btnDelCurrentProfileItem');
                     const gData = document.querySelector('#gData').dataset.loginiuser;
                     const cmtProfileimgList = document.querySelectorAll('#cmtProfileimg');
                     cmtProfileimgList.forEach(item => {
@@ -168,10 +170,11 @@ if (feedObj) {
                     profileimgList.forEach(item => {
                         item.src = '/static/img/profile/user.png';
                     });
+
+                    btnProfileImgModalClose.click();
+                    //이미지 삭제하면 d-none 다시 만들어줌
+                    modalItem.classList.add('d-none');
                 }
-                btnProfileImgModalClose.click();
-                //이미지 삭제하면 d-none 다시 만들어줌
-                modalItem.classList.add('d-none');
             });
         });
     }

@@ -78,11 +78,9 @@
             <div class="modal_item" data-bs-target="#changeProfileImg" data-bs-toggle="modal" id="btnUpdProfilePic">
                 <span class="bold pointer c_primary-button">사진 업로드</span>
             </div>
-            <!-- <?php if(isset(getLoginUser()->mainimg)) { ?>
-            <div class="modal_item" id="btnDelCurrentProfileItem">
+            <div class="modal_item <?= $this->data->mainimg ? "" : "d-none" ?>" id="btnDelCurrentProfileItem">
                 <span id="btnDelCurrentProfilePic" class="bold pointer c_error-or-destructive">현재 사진 삭제</span>
             </div>
-            <?php } ?> -->
             <div class="modal_item">
                 <span class="pointer" id="btnProfileImgModalClose" data-bs-dismiss="modal">취소</span>
             </div>
